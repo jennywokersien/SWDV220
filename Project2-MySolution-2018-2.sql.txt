@@ -1,0 +1,78 @@
+/*********************************************************************************
+* Date		Programmer		Description
+* --------- --------------- -----------------------------------------------------
+*
+*********************************************************************************/
+
+--Creates the new database
+CREATE DATABASE disk_inventory;
+GO
+
+USE disk_inventory;
+GO
+
+--Creates genra table and assigns data types, attributes
+CREATE TABLE genre
+	(genre_id	INT		NOT NULL PRIMARY KEY IDENTITY,
+	description	NVARCHAR(100)	NOT NULL);
+
+
+
+--Creates status table and assigns data types, attributes
+CREATE TABLE status
+	(status_id	INT		NOT NULL PRIMARY KEY IDENTITY,
+	description	NVARCHAR(100)	NOT NULL);
+
+
+
+--Creates disk_type table and assigns data types, attributes
+CREATE TABLE disk_type
+	(disk_type_id	INT		NOT NULL PRIMARY KEY IDENTITY,
+	description	NVARCHAR(100)	NOT NULL);
+
+
+	
+--Creates borrowers table and assigns data types, attributes
+CREATE TABLE borrower 
+	(borrower_id	INT		NOT NULL PRIMARY KEY IDENTITY,
+	fname		NVARCHAR(100)	NOT NULL,
+	lname		NVARCHAR(50)	NOT NULL,
+	phone_num	VARCHAR(50)	NOT NULL);
+
+
+	
+--Creates artist table and assigns data types, attributes
+CREATE TABLE artist 
+	(artist_id	INT		NOT NULL PRIMARY KEY IDENTITY,
+	fname		NVARCHAR(50)	NOT NULL,
+	lname		NVARCHAR(50)	NULL
+       group_name    NVARCHAR(50)  NULL);	
+	
+
+--Creates disk table and assigns data types, attributes, adds FK to genra, status and disk_type tables
+CREATE TABLE disk
+	(disk_id	INT		NOT NULL PRIMARY KEY IDENTITY,
+	disk_name	NVARCHAR(100)	NOT NULL,
+	release_date	SMALLDATETIME	NULL,
+	genre_id	INT		NOT NULL REFERENCES genre(genre_id),
+	status_id	INT		NOT NULL REFERENCES status(status_id),
+	disk_type_id	INT		NOT NULL REFERENCES disk_type(disk_type_id));		 
+
+
+
+--Creates diskHasArtist table and assigns data types, attributes, adds PK/FK to disk_id, artist_id
+CREATE TABLE diskHasArtist
+(disk_id		INT	NOT NULL REFERENCES disk(disk_id),
+artist_id		INT	NOT NULL REFERENCES artist(artist_id)
+ 	PRIMARY KEY (artist_id, disk_id));
+
+
+--Creates diskHasBorrower table and assigns data types, attributes, adds PK to disk_id, artist_id and borrowed_date and FK to disk_id, borrower_id
+CREATE TABLE diskHasBorrower
+	(borrower_id			INT	NOT NULL REFERENCES disk(disk_id),
+	disk_id			INT	NOT NULL REFERENCES borrower(borrower_id),
+	borrowed_date		SMALLDATETIME	NOT NULL,
+	returned_date		SMALLDATETIME	NULL,
+	PRIMARY KEY (disk_id, borrower_id, borrowed_date));
+
+
